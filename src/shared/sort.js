@@ -1,5 +1,7 @@
-import { toDateValue } from './date.js';
+const toEventTimestamp = (item) => new Date(`${item.date}T${item.time || '00:00'}`).getTime();
 
-export const sortEventsByUpcoming = (events) => [...events].sort((a, b) => toDateValue(a.date) - toDateValue(b.date));
-export const sortTrailReportsNewestFirst = (reports) => [...reports].sort((a, b) => new Date(`${b.date}T${b.time || '00:00'}`).getTime() - new Date(`${a.date}T${a.time || '00:00'}`).getTime());
-export const selectLatestTrailReport = (reports) => sortTrailReportsNewestFirst(reports)[0] || null;
+export const sortEventsByDate = (events) => [...events].sort((a, b) => toEventTimestamp(a) - toEventTimestamp(b));
+
+export const sortTrailReportsByNewest = (reports) => [...reports].sort((a, b) => toEventTimestamp(b) - toEventTimestamp(a));
+
+export const selectLatestTrailReport = (reports) => sortTrailReportsByNewest(reports)[0] ?? null;

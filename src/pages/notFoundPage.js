@@ -1,0 +1,1 @@
+export const renderNotFoundPage = () => '<main id="main-content"><section class="card"><h1>Page Not Found</h1><p>The page you requested is unavailable.</p><button class="btn" data-nav="home">Return Home</button></section></main>';

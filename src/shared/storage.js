@@ -1,11 +1,12 @@
-export const loadPersisted = (key, fallback) => {
+export const safeLoadJson = (key, fallback) => {
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw);
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
   } catch {
     return fallback;
   }
 };
 
-export const savePersisted = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+export const safeSaveJson = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};

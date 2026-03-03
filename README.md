@@ -1,27 +1,35 @@
 # St. Anthony Nordic Ski Club
 
-A production-minded, local-first frontend rebuild of the St. Anthony Nordic Ski Club prototype with preserved structure, page flow, and CMS-style editing behavior.
+A faithful rebuild of the original ski club prototype with improved architecture, accessibility, and production-minded maintainability.
 
-## Chosen stack and rationale
+## Project Overview
+This application preserves the original product behavior and visual tone:
+- warm, community-driven Nordic club identity
+- card-focused content layout
+- sticky header + trail status banner
+- CMS/edit mode with audit logging
+- local-first persistence and seeded realistic content
+- weather/social/activity widgets
 
+## Chosen Stack and Why
 ### Stack
-- Dependency-light **Vanilla ES Modules SPA** (History API routing)
-- Node scripts for `dev`, `build`, and `preview`
-- Node built-in test runner for core logic coverage
+- **Vanilla JavaScript (ES Modules) SPA** with History API routing
+- Local modular stores (UI / domain content / weather integration)
+- Node built-in test runner (`node --test`)
 
-### Why this stack
-I selected a modular vanilla stack to maximize reliability in constrained environments while still preserving full UX fidelity (multi-page feel, CMS mode, edit controls, local persistence, weather integration, audit log). The architecture is organized by feature modules so a future migration to React/Vue is straightforward.
+### Why this stack was chosen
+The top requirement is fidelity to the original interaction model while keeping maintainability high. In this constrained environment, a dependency-light modular SPA avoids toolchain fragility, still supports deep linking and CMS interactions cleanly, and keeps the architecture easy to migrate later to React/Vue if desired. The implementation emphasizes feature boundaries and repository-like data actions to stay production-ready.
 
 ## Install
 ```bash
 npm install
 ```
 
-## Develop
+## Run in Development
 ```bash
 npm run dev
 ```
-Then open `http://localhost:4173`.
+Open `http://localhost:4173`.
 
 ## Build
 ```bash
@@ -33,26 +41,36 @@ npm run build
 npm test
 ```
 
-## Architecture overview
-- `src/app`: app shell, renderer, store
-- `src/data`: seed content
-- `src/features/*`: weather, cms validation, audit
-- `src/shared/*`: sorting, date formatting, safe storage helpers
-- `src/styles`: global visual system and responsive styling
-- `tests/*`: logic and smoke coverage
+## Architecture Overview
+- `src/app`
+  - `main.js`: app bootstrap and store wiring
+  - `router.js`: deep-link + history routing
+  - `renderApp.js`: composition root and event binding
+  - `stores/`: split stores for UI, content, and weather
+- `src/pages`: page modules (`home`, `events`, `programs`, `trails`, `rentals`, `membership`, `about`, `404`)
+- `src/components`
+  - `layout/`: header/footer
+  - `widgets/`: weather/social/activity
+  - `cms/`: audit modal
+- `src/features`: domain concerns (`cms validation`, `audit entry`, `weather API + code mapping`)
+- `src/shared`: cross-feature utilities (`date`, `sorting`, `safe storage`)
+- `src/data/seed.js`: realistic local seed content
+- `tests/`: utility and behavior tests
 
-## Persistence approach
-- A local-first store hydrates from `localStorage` using guarded JSON parsing.
-- Initial boot falls back to realistic seed data.
-- Domain updates pass through action functions and produce centralized audit entries.
+## Persistence Approach
+- Seed data initializes domain state on first run.
+- Content state is persisted in `localStorage` using safe JSON parse/load helpers.
+- All content writes go through content store actions (events, trails, programs, rentals, about), which also produce centralized audit entries.
+- UI state is intentionally separate from domain state.
 
-## Replacing local/mock data with real APIs
-1. Replace store action internals (`src/app/store.js`) with async repository calls.
-2. Keep form validation and UI unchanged.
-3. Map backend response models to the same frontend entities.
-4. Continue writing audit events server-side while retaining local UI modal rendering.
+## Replacing Local/Mock Data with Real APIs
+1. Keep page and component modules unchanged.
+2. Replace content store action internals with async repository/API calls.
+3. Map API responses into current domain shapes.
+4. Persist audit entries server-side and hydrate the modal from API.
+5. Keep weather module as-is or swap in a server proxy if needed.
 
 ## Fidelity to Original Prototype
-- Preserved: page set (Home, Events, Programs, Trails, Rentals, Membership, About), sticky header, trail status banner, card-driven content hierarchy, community/winter tone, CMS mode toggle with visible indicator, edit-only controls, audit log, weather/social/activity widgets, and CRUD flow on events/trails.
-- Improved: modular code boundaries, reusable utilities for sorting/latest selection, explicit validation, resilient persistence layer, and test coverage for key business logic.
-- Changed intentionally: implemented with dependency-light modules for maintainability and predictable local execution while retaining original behavior and structure.
+- **Intentionally preserved:** page set/routes, sticky global header, responsive navigation, trail status banner, card-based page composition, CMS mode pattern, edit controls visibility, weather/social/activity modules, and audit trail behavior.
+- **Technically improved:** modular page/component boundaries, split state domains (UI/content/external), reusable utilities for sorting/latest-selection/date formatting, stronger form validation flows, and clearer persistence boundaries.
+- **Changed (and why):** implementation is dependency-light and framework-agnostic to maximize reliability in this environment while preserving the same visible product behavior and interaction model.
