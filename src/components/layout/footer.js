@@ -1,0 +1,1 @@
+export const renderFooter = () => `<footer class="site-footer"><div class="footer-wrap"><p>St. Anthony Nordic Ski Club · Volunteer-powered nonprofit</p><p>St. Anthony, Newfoundland and Labrador · info@sansc.ca</p></div></footer>`;
