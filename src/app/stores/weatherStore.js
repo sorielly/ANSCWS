@@ -1,4 +1,4 @@
-import { fetchStAnthonyWeather } from '../../features/weather/weatherApi.js';
+import { WEATHER_ERROR_MESSAGE, fetchStAnthonyWeather } from '../../features/weather/weatherApi.js';
 
 export const createWeatherStore = () => {
   let state = { loading: true, error: '', payload: null, updatedAt: '' };
@@ -25,7 +25,7 @@ export const createWeatherStore = () => {
         state = { loading: false, error: '', payload, updatedAt: new Date().toISOString() };
       } catch (error) {
         if (error.name === 'AbortError') return;
-        state = { ...state, loading: false, error: 'Weather is temporarily unavailable.' };
+        state = { ...state, loading: false, error: `${WEATHER_ERROR_MESSAGE} Please try again soon.` };
       }
       notify();
     }
