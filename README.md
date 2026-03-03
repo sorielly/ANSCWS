@@ -1,4 +1,4 @@
-# St. Anthony Nordic Ski Club
+# Nordic Ski Club
 
 A faithful rebuild of the original ski club prototype with improved architecture, accessibility, and production-minded maintainability.
 
