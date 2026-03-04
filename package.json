@@ -8,6 +8,7 @@
     "build": "node scripts/build.js",
     "test": "node --test",
     "start": "node scripts/preview.js",
-    "check:internal-modules": "node scripts/no-unused-internal-modules.js"
+    "lint": "node scripts/lint.js",
+    "format:check": "node scripts/format-check.js"
   }
 }

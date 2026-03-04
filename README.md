@@ -41,6 +41,15 @@ npm run build
 npm test
 ```
 
+## Quality Checks
+Run these commands locally before opening a PR:
+
+```bash
+npm test
+npm run lint
+npm run format:check
+```
+
 ## Architecture Overview
 - `src/app`
   - `main.js`: app bootstrap and canonical store wiring

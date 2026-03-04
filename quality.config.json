@@ -1,0 +1,14 @@
+{
+  "include": ["src/**/*.js", "tests/**/*.js", "scripts/**/*.js"],
+  "lint": {
+    "disallowTabs": true,
+    "requireFinalNewline": true,
+    "disallowTrailingWhitespace": true
+  },
+  "format": {
+    "semi": true,
+    "singleQuote": true,
+    "disallowTabs": true,
+    "requireFinalNewline": true
+  }
+}
