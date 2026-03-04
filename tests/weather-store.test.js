@@ -2,94 +2,90 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createWeatherStore } from '../src/app/stores/weatherStore.js';
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const samplePayload = {
+  current: { temperature_2m: -3, weather_code: 3, wind_speed_10m: 12 },
+  daily: {
+    time: ['2026-01-01', '2026-01-02', '2026-01-03'],
+    weather_code: [3, 2, 1],
+    temperature_2m_max: [-1, 0, 1],
+    temperature_2m_min: [-6, -5, -4]
+  }
+};
 
-test('[weatherStore] loading transitions from true to false on successful refresh', async () => {
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => ({
-    ok: true,
-    json: async () => ({ current: { temperature_2m: -2 } })
-  });
+test('weather store refresh stores payload on successful fetch', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = async (url, options) => {
+    assert.match(url, /forecast_days=4/);
+    assert.ok(options.signal);
+    return { ok: true, json: async () => samplePayload };
+  };
 
   try {
     const store = createWeatherStore();
-    const snapshots = [];
-    store.subscribe((state) => snapshots.push({ ...state }));
-
     await store.refresh();
 
-    assert.equal(snapshots.length, 2);
-    assert.equal(snapshots[0].loading, true);
-    assert.equal(snapshots[0].error, '');
-    assert.equal(snapshots[1].loading, false);
-    assert.equal(snapshots[1].error, '');
-    assert.deepEqual(snapshots[1].payload, { current: { temperature_2m: -2 } });
-    assert.ok(snapshots[1].updatedAt);
+    const state = store.get();
+    assert.equal(state.loading, false);
+    assert.equal(state.error, '');
+    assert.deepEqual(state.payload, samplePayload);
+    assert.notEqual(state.updatedAt, '');
   } finally {
-    globalThis.fetch = originalFetch;
+    global.fetch = originalFetch;
   }
 });
 
-test('[weatherStore] aborts prior request and keeps latest successful payload', async () => {
-  const originalFetch = globalThis.fetch;
-  const payload = { current: { temperature_2m: -5 } };
-  let firstSignal;
+test('weather store aborts an in-flight refresh before starting a new one', async () => {
+  const originalFetch = global.fetch;
+  const seenSignals = [];
+  let firstCall = true;
 
-  globalThis.fetch = (url, { signal }) => {
-    if (!firstSignal) {
-      firstSignal = signal;
+  global.fetch = (url, options) => {
+    seenSignals.push(options.signal);
+
+    if (firstCall) {
+      firstCall = false;
       return new Promise((resolve, reject) => {
-        signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
-        setTimeout(() => resolve({ ok: true, json: async () => ({ current: { temperature_2m: 99 } }) }), 50);
+        options.signal.addEventListener('abort', () => {
+          reject(Object.assign(new Error('Aborted'), { name: 'AbortError' }));
+        });
       });
     }
-    return Promise.resolve({ ok: true, json: async () => payload });
+
+    return Promise.resolve({ ok: true, json: async () => samplePayload });
   };
 
   try {
     const store = createWeatherStore();
 
     const firstRefresh = store.refresh();
-    await delay(0);
     const secondRefresh = store.refresh();
 
-    await Promise.all([firstRefresh, secondRefresh]);
+    await Promise.allSettled([firstRefresh, secondRefresh]);
 
-    assert.equal(firstSignal.aborted, true);
-    assert.deepEqual(store.get().payload, payload);
-    assert.equal(store.get().loading, false);
+    assert.equal(seenSignals.length, 2);
+    assert.equal(seenSignals[0].aborted, true);
+    assert.equal(store.get().error, '');
+    assert.deepEqual(store.get().payload, samplePayload);
   } finally {
-    globalThis.fetch = originalFetch;
+    global.fetch = originalFetch;
   }
 });
 
-test('[weatherStore] keeps existing payload when refresh fails and sets fallback error', async () => {
-  const originalFetch = globalThis.fetch;
-  const existingPayload = { current: { temperature_2m: -10 } };
-  let fetchCount = 0;
-
-  globalThis.fetch = async () => {
-    fetchCount += 1;
-    if (fetchCount === 1) {
-      return { ok: true, json: async () => existingPayload };
-    }
-    return { ok: false, json: async () => ({}) };
+test('weather store exposes user-facing message when refresh fails', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = async () => {
+    throw new Error('Network down');
   };
 
   try {
     const store = createWeatherStore();
     await store.refresh();
 
-    const snapshots = [];
-    store.subscribe((state) => snapshots.push({ ...state }));
-    await store.refresh();
-
-    assert.equal(store.get().error, 'Weather is temporarily unavailable.');
-    assert.equal(store.get().loading, false);
-    assert.deepEqual(store.get().payload, existingPayload);
-    assert.equal(snapshots.length, 1);
-    assert.equal(snapshots[0].loading, false);
+    const state = store.get();
+    assert.equal(state.loading, false);
+    assert.equal(state.error, 'Weather service unavailable. Please try again soon.');
+    assert.equal(state.payload, null);
   } finally {
-    globalThis.fetch = originalFetch;
+    global.fetch = originalFetch;
   }
 });

@@ -7,6 +7,8 @@
     "dev": "node scripts/dev-server.js",
     "build": "node scripts/build.js",
     "test": "node --test",
-    "start": "node scripts/preview.js"
+    "start": "node scripts/preview.js",
+    "lint": "node scripts/lint.js",
+    "format:check": "node scripts/format-check.js"
   }
 }
