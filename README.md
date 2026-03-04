@@ -50,6 +50,15 @@ npm run lint
 npm run format:check
 ```
 
+
+## Design QA Checklist (UI Refactors)
+Use this quick pass whenever visual updates land:
+- Confirm text and control contrast remains WCAG AA minimum (4.5:1 for body text, 3:1 for large text/UI states).
+- Verify keyboard-only navigation reaches header controls, cards, form fields, and modal actions in a logical order.
+- Ensure `:focus-visible` outlines are clearly visible on all interactive elements.
+- Check semantic structure (`header`/`nav`/`main`, heading order, and correct button vs link usage).
+- Smoke-check home critical UI: primary navigation, hero CTAs, and weather/social/activity widgets render correctly.
+
 ## Architecture Overview
 - `src/app`
   - `main.js`: app bootstrap and canonical store wiring

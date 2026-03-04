@@ -13,7 +13,7 @@ export const renderHomePage = ({ content, weatherState }) => {
       <p class="eyebrow">Northern Peninsula · Newfoundland</p>
       <h1>Welcome to St. Anthony Nordic Ski Club</h1>
       <p class="hero-copy">Warm community programs, volunteer-groomed trails, and winter adventure for all ages.</p>
-      <div class="hero-actions"><button class="btn" data-nav="membership">Join the Club</button><button class="btn secondary" data-nav="events">View Events</button></div>
+      <div class="hero-actions"><a class="btn" href="/membership" data-nav="membership">Join the Club</a><a class="btn secondary" href="/events" data-nav="events">View Events</a></div>
     </section>
     <section class="grid two-up">
       <article class="card"><h2>Upcoming Events</h2>

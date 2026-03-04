@@ -34,10 +34,10 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
   };
 
   const bindGlobalActions = (route, context) => {
-    root.querySelectorAll('[data-nav]').forEach((link) => {
-      link.addEventListener('click', (event) => {
+    root.querySelectorAll('[data-nav]').forEach((target) => {
+      target.addEventListener('click', (event) => {
         event.preventDefault();
-        router.navigate(link.dataset.nav);
+        router.navigate(target.dataset.nav);
         uiStore.update({ mobileNavOpen: false });
       });
     });
@@ -49,6 +49,18 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
     root.querySelector('[data-action="toggle-cms"]')?.addEventListener('click', () => uiStore.update({ cmsMode: !uiStore.get().cmsMode }));
     root.querySelector('[data-action="open-audit"]')?.addEventListener('click', () => uiStore.update({ auditModalOpen: true }));
     root.querySelector('[data-action="close-audit"]')?.addEventListener('click', () => uiStore.update({ auditModalOpen: false }));
+
+    const modalBackdrop = root.querySelector('.modal-backdrop');
+    if (modalBackdrop) {
+      modalBackdrop.addEventListener('click', (event) => {
+        if (event.target === modalBackdrop) {
+          uiStore.update({ auditModalOpen: false });
+        }
+      });
+
+      const modalCard = modalBackdrop.querySelector('.modal-card');
+      modalCard?.focus();
+    }
 
     if (route === 'events') {
       root.querySelectorAll('[data-action="delete-event"]').forEach((button) => button.addEventListener('click', () => contentStore.deleteEvent(button.dataset.id)));
@@ -137,6 +149,12 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
     });
   };
 
+  const handleGlobalKeydown = (event) => {
+    if (event.key === 'Escape' && uiStore.get().auditModalOpen) {
+      uiStore.update({ auditModalOpen: false });
+    }
+  };
+
   const render = (route = router.getRoute()) => {
     const context = getContext(route);
     const pageBody = pageRenderers[route](context);
@@ -150,6 +168,9 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
     `;
 
     bindGlobalActions(route, context);
+
+    window.removeEventListener('keydown', handleGlobalKeydown);
+    window.addEventListener('keydown', handleGlobalKeydown);
   };
 
   return { render };
