@@ -16,10 +16,11 @@ export const renderTrailsPage = ({ content, cmsMode }) => {
   const reports = sortTrailReportsByNewest(content.trailReports);
   const latest = selectLatestTrailReport(reports);
 
-  return `<main id="main-content"><section><p class="eyebrow text-subtle">Conditions</p><h1>Trails</h1></section>
-    <section class="card"><h2>Current Conditions</h2>${latest ? `<p class="status ${latest.status}">${latest.status.toUpperCase()}</p><p class="content-measure">${latest.conditions}</p><p class="text-muted">${formatDate(latest.date)} · ${formatTime(latest.time)} · ${latest.temp}</p>` : '<p class="empty-state">No trail reports posted.</p>'}</section>
-    <section class="grid two-up">${reports.map((report) => `<article class="card"><h3>${report.trails}</h3><p class="status ${report.status}">${report.status.toUpperCase()}</p><p class="content-measure">${report.conditions}</p><p class="text-muted">${formatDate(report.date)} · ${formatTime(report.time)} · ${report.author}</p>${cmsMode ? `<div class="card-actions"><button class="btn secondary" data-action="edit-trail" data-id="${report.id}">Edit</button><button class="btn danger" data-action="delete-trail" data-id="${report.id}">Delete</button></div>` : ''}</article>`).join('')}</section>
-    ${cmsMode ? `<section class="card"><h2>Create Trail Report</h2>${renderTrailForm()}</section>` : ''}
+  return `<main id="main-content">
+    <section class="section"><div class="container"><header class="section-header"><h1>Trails</h1></header></div></section>
+    <section class="section"><div class="container"><header class="section-header"><h2>Featured conditions</h2></header><div class="section-body"><article class="card">${latest ? `<p class="status ${latest.status}">${latest.status.toUpperCase()}</p><p>${latest.conditions}</p><p class="muted">${formatDate(latest.date)} · ${formatTime(latest.time)} · ${latest.temp}</p>` : '<p class="empty-state">No trail reports posted.</p>'}</article></div></div></section>
+    <section class="section"><div class="container"><header class="section-header"><h2>Latest reports</h2></header><div class="section-body grid two-up">${reports.map((report) => `<article class="card"><h3>${report.trails}</h3><p class="status ${report.status}">${report.status.toUpperCase()}</p><p>${report.conditions}</p><p class="muted">${formatDate(report.date)} · ${formatTime(report.time)} · ${report.author}</p>${cmsMode ? `<div class="card-actions"><button class="btn secondary" data-action="edit-trail" data-id="${report.id}">Edit</button><button class="btn danger" data-action="delete-trail" data-id="${report.id}">Delete</button></div>` : ''}</article>`).join('')}</div></div></section>
+    ${cmsMode ? `<section class="section"><div class="container"><header class="section-header"><h2>Manage reports</h2></header><div class="section-body"><article class="card">${renderTrailForm()}</article></div></div></section>` : ''}
   </main>`;
 };
 

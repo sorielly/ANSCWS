@@ -14,11 +14,12 @@ const renderEventForm = (event = {}) => `<form class="cms-form" data-form="event
 export const renderEventsPage = ({ content, cmsMode }) => {
   const events = sortEventsByDate(content.events);
 
-  return `<main id="main-content"><section><p class="eyebrow text-subtle">Community Calendar</p><h1>Events</h1></section>
-    <section class="grid two-up">
-      ${events.length ? events.map((event) => `<article class="card"><span class="badge">${event.category}</span><h3>${event.title}</h3><p class="text-muted">${formatDate(event.date)} · ${formatTime(event.time)} · ${event.location}</p><p class="content-measure">${event.description}</p>${cmsMode ? `<div class="card-actions"><button class="btn secondary" data-action="edit-event" data-id="${event.id}">Edit</button><button class="btn danger" data-action="delete-event" data-id="${event.id}">Delete</button></div>` : ''}</article>`).join('') : '<p class="empty-state">No events are scheduled yet.</p>'}
-    </section>
-    ${cmsMode ? `<section class="card"><h2>Create Event</h2>${renderEventForm()}</section>` : ''}
+  return `<main id="main-content">
+    <section class="section"><div class="container"><header class="section-header"><h1>Events</h1></header></div></section>
+    <section class="section"><div class="container"><header class="section-header"><h2>Featured events</h2></header><div class="section-body grid two-up">
+      ${events.length ? events.map((event) => `<article class="card"><span class="badge">${event.category}</span><h3>${event.title}</h3><p class="muted">${formatDate(event.date)} · ${formatTime(event.time)} · ${event.location}</p><p>${event.description}</p>${cmsMode ? `<div class="card-actions"><button class="btn secondary" data-action="edit-event" data-id="${event.id}">Edit</button><button class="btn danger" data-action="delete-event" data-id="${event.id}">Delete</button></div>` : ''}</article>`).join('') : '<p class="empty-state">No events are scheduled yet.</p>'}
+    </div></div></section>
+    ${cmsMode ? `<section class="section"><div class="container"><header class="section-header"><h2>Manage events</h2></header><div class="section-body"><article class="card">${renderEventForm()}</article></div></div></section>` : ''}
   </main>`;
 };
 
