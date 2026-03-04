@@ -13,6 +13,10 @@ export const renderHeader = ({ route, uiState, latestReport }) => {
         <button class="nav-button" data-action="open-audit">Audit Log</button>
       </nav>
     </div>
-    <button class="trail-banner ${theme}" data-nav="trails">Trail Status: ${status} · ${latestReport?.conditions?.slice(0, 96) || 'No current report.'}</button>
+    <button class="trail-banner ${theme}" data-nav="trails">
+      <span class="trail-banner__label"><span class="icon-dot">❄</span>Trail Status</span>
+      <span class="badge badge--status-${theme}">${status}</span>
+      <span class="trail-banner__summary">${latestReport?.conditions?.slice(0, 96) || 'No current report.'}</span>
+    </button>
   </header>`;
 };
