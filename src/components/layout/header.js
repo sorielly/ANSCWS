@@ -27,5 +27,10 @@ export const renderHeader = ({ route, uiState, latestReport }) => {
         <span class="trail-banner-cta">View trails</span>
       </button>
     </div>
+    <button class="trail-banner ${theme}" data-nav="trails">
+      <span class="trail-banner__label"><span class="icon-dot">❄</span>Trail Status</span>
+      <span class="badge badge--status-${theme}">${status}</span>
+      <span class="trail-banner__summary">${latestReport?.conditions?.slice(0, 96) || 'No current report.'}</span>
+    </button>
   </header>`;
 };
