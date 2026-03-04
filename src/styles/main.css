@@ -152,4 +152,5 @@ input, textarea, select { width: 100%; padding: 9px; border: 1px solid var(--bor
   .menu-toggle { display: inline-block; }
   .primary-nav { display: none; position: absolute; top: 60px; left: 0; right: 0; background: var(--color-navy-800); padding: var(--space-2) var(--space-4); }
   .primary-nav.open { display: flex; }
+  .hero-inner { grid-template-columns: 1fr; padding: 26px; }
 }
