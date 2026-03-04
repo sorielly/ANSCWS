@@ -10,10 +10,10 @@ export const renderHomePage = ({ content, weatherState }) => {
 
   return `<main id="main-content">
     <section class="hero card-hero">
-      <p class="eyebrow">Northern Peninsula · Newfoundland</p>
+      <p class="eyebrow aurora-chip">Northern Peninsula · Newfoundland</p>
       <h1>Welcome to St. Anthony Nordic Ski Club</h1>
       <p class="hero-copy">Warm community programs, volunteer-groomed trails, and winter adventure for all ages.</p>
-      <div class="hero-actions"><button class="btn" data-nav="membership">Join the Club</button><button class="btn secondary" data-nav="events">View Events</button></div>
+      <div class="hero-actions"><button class="btn cta" data-nav="membership">Join the Club</button><button class="btn secondary" data-nav="events">View Events</button></div>
     </section>
     <section class="grid two-up">
       <article class="card"><h2>Upcoming Events</h2>
@@ -28,6 +28,6 @@ export const renderHomePage = ({ content, weatherState }) => {
       ${renderSocialWidget(content.socialPosts.slice(0, 3))}
       ${renderActivityWidget(content.activities.slice(0, 3))}
     </section>
-    <section class="card quick-links"><h2>Quick Links</h2><div class="quick-link-grid"><a href="/trails" data-nav="trails">Trail Conditions</a><a href="/rentals" data-nav="rentals">Equipment Rentals</a><a href="/programs" data-nav="programs">Programs</a></div></section>
+    <section class="card quick-links aurora-border"><h2>Quick Links</h2><div class="quick-link-grid"><a href="/trails" data-nav="trails">Trail Conditions</a><a href="/rentals" data-nav="rentals">Equipment Rentals</a><a href="/programs" data-nav="programs">Programs</a></div></section>
   </main>`;
 };
