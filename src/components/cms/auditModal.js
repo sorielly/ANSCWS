@@ -1,10 +1,11 @@
 export const renderAuditModal = (open, auditLog) => {
   if (!open) return '';
-  return `<div class="modal-backdrop" data-action="close-audit" role="dialog" aria-modal="true" aria-labelledby="audit-title">
-    <div class="modal-card" id="audit-modal" tabindex="-1">
+  return `<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="audit-title">
+    <div class="modal-card">
+      <p class="eyebrow text-subtle">CMS</p>
       <h2 id="audit-title">Audit Log</h2>
-      ${auditLog.length ? auditLog.map((entry) => `<article class="audit-item"><p><strong>${entry.entity}</strong> ${entry.action} · ${entry.summary}</p><p class="muted">${new Date(entry.timestamp).toLocaleString()}</p></article>`).join('') : '<p class="empty-state">No content changes yet.</p>'}
-      <button class="btn secondary" type="button" data-action="close-audit">Close</button>
+      ${auditLog.length ? auditLog.map((entry) => `<article class="audit-item"><p><span class="text-strong">${entry.entity}</span> ${entry.action} · ${entry.summary}</p><p class="text-muted">${new Date(entry.timestamp).toLocaleString()}</p></article>`).join('') : '<p class="empty-state">No content changes yet.</p>'}
+      <button class="btn secondary" data-action="close-audit">Close</button>
     </div>
   </div>`;
 };

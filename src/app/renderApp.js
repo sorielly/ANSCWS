@@ -42,12 +42,14 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
       });
     });
 
-    root.querySelector('[data-action="toggle-mobile-nav"]')?.addEventListener('click', () => {
-      uiStore.update({ mobileNavOpen: !uiStore.get().mobileNavOpen });
+    root.querySelectorAll('[data-action="toggle-mobile-nav"]').forEach((button) => {
+      button.addEventListener('click', () => {
+        uiStore.update({ mobileNavOpen: !uiStore.get().mobileNavOpen });
+      });
     });
 
-    root.querySelector('[data-action="toggle-cms"]')?.addEventListener('click', () => uiStore.update({ cmsMode: !uiStore.get().cmsMode }));
-    root.querySelector('[data-action="open-audit"]')?.addEventListener('click', () => uiStore.update({ auditModalOpen: true }));
+    root.querySelectorAll('[data-action="toggle-cms"]').forEach((button) => button.addEventListener('click', () => uiStore.update({ cmsMode: !uiStore.get().cmsMode })));
+    root.querySelectorAll('[data-action="open-audit"]').forEach((button) => button.addEventListener('click', () => uiStore.update({ auditModalOpen: true })));
     root.querySelector('[data-action="close-audit"]')?.addEventListener('click', () => uiStore.update({ auditModalOpen: false }));
 
     const modalBackdrop = root.querySelector('.modal-backdrop');
@@ -111,6 +113,25 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
     });
   };
 
+
+  let scrollHandlerBound = false;
+  let syncHeaderState = () => {};
+
+  const bindScrollState = () => {
+    syncHeaderState = () => {
+      const header = root.querySelector('.site-header');
+      if (!header) return;
+      header.classList.toggle('is-scrolled', window.scrollY > 10);
+    };
+
+    if (!scrollHandlerBound) {
+      window.addEventListener('scroll', () => syncHeaderState(), { passive: true });
+      scrollHandlerBound = true;
+    }
+
+    syncHeaderState();
+  };
+
   const bindFormActions = () => {
     root.querySelectorAll('[data-action="cancel-form"]').forEach((button) => {
       button.addEventListener('click', () => button.closest('form')?.remove());
@@ -168,9 +189,7 @@ export const createAppRenderer = ({ root, uiStore, contentStore, weatherStore, r
     `;
 
     bindGlobalActions(route, context);
-
-    window.removeEventListener('keydown', handleGlobalKeydown);
-    window.addEventListener('keydown', handleGlobalKeydown);
+    bindScrollState();
   };
 
   return { render };
