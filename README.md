@@ -52,10 +52,14 @@ npm run format:check
 
 ## Architecture Overview
 - `src/app`
-  - `main.js`: app bootstrap and store wiring
+  - `main.js`: app bootstrap and canonical store wiring
   - `router.js`: deep-link + history routing
   - `renderApp.js`: composition root and event binding
-  - `stores/`: split stores for UI, content, and weather
+  - `stores/`: **canonical store modules**
+    - `uiStore.js`: UI-only flags (CMS mode, mobile nav, audit modal)
+    - `contentStore.js`: content editing + audit log generation
+    - `weatherStore.js`: weather fetch/cache and refresh lifecycle
+  - Legacy parallel store implementations are intentionally disallowed outside `src/app/stores/`.
 - `src/pages`: page modules (`home`, `events`, `programs`, `trails`, `rentals`, `membership`, `about`, `404`)
 - `src/components`
   - `layout/`: header/footer
@@ -83,3 +87,8 @@ npm run format:check
 - **Intentionally preserved:** page set/routes, sticky global header, responsive navigation, trail status banner, card-based page composition, CMS mode pattern, edit controls visibility, weather/social/activity modules, and audit trail behavior.
 - **Technically improved:** modular page/component boundaries, split state domains (UI/content/external), reusable utilities for sorting/latest-selection/date formatting, stronger form validation flows, and clearer persistence boundaries.
 - **Changed (and why):** implementation is dependency-light and framework-agnostic to maximize reliability in this environment while preserving the same visible product behavior and interaction model.
+
+## Internal Module Hygiene
+- Run `npm run check:internal-modules` to prevent obsolete internal modules from lingering.
+- The check fails if legacy files like `src/app/store.js` or `src/features/audit/audit.js` exist or are still imported.
+- Keep app state entrypoints in `src/app/main.js` and `src/app/renderApp.js`, with stores sourced only from `src/app/stores/`.
